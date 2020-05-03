@@ -1,0 +1,23 @@
+include <stdint.h>
+
+uint64_t state_pcg32;
+
+void seed_prng(uint64_t seed)
+{
+	state_pcg32 = seed;
+}
+
+static uint32_t rotr32(uint32_t x, unsigned r)
+{
+    return x >> r | x << (-r & 31);
+}
+
+uint32_t random()
+{
+    uint64_t x = state_pcg32;
+    unsigned count = (unsigned)(x >> 59);		// 59 = 64 - 5
+
+    state_pcg32 = x * 6364136223846793005u + 1442695040888963407u;
+    x ^= x >> 18;								// 18 = (64 - 27)/2
+    return rotr32((uint32_t)(x >> 27), count);	// 27 = 32 - 5
+}
