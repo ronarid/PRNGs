@@ -1,0 +1,18 @@
+#include <stdint.h>
+
+static uint32_t state_xorshift32;
+
+void seed_prng(uint32_t seed)
+{
+	state_xorshift32 = seed;
+}
+
+uint32_t random()
+{
+  uint32_t x = state_xorshift32;
+  x ^= x << 13;
+  x ^= x >> 17;
+  x ^= x << 5;
+  state_xorshift32 = x;
+  return x;
+}
