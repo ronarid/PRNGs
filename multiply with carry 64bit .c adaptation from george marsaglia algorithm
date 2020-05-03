@@ -3,7 +3,7 @@
 static uint64_t state_x;
 static uint64_t state_y;
 
-void seedprng(uint64_t seed)
+void seed_prng(uint64_t seed)
 {
        state_x = seed | 1;
        state_y = seed | 2;
