@@ -1,0 +1,40 @@
+#include <stdint.h>
+
+uint64_t state_xoshiro256mm[4];
+
+void seed_prng(uint64_t seed)
+{
+    uint64_t z = (seed += UINT64_C(0x9E3779B97F4A7C15));
+    for(unsigned char c0=0;c0<4;c0++)
+    {
+        do
+        {
+            z = (z ^ (z >> 30)) * UINT64_C(0xBF58476D1CE4E5B9);
+            z = (z ^ (z >> 27)) * UINT64_C(0x94D049BB133111EB);
+            state_xoshiro256mm[c0]=(z ^ (z >> 31));
+        }while (state_xoshiro256mm[c0]==0);
+    }
+}
+
+static inline uint64_t rotl(const uint64_t x, int k)
+{
+    return (x << k) | (x >> (64 - k));
+}
+
+uint64_t random()
+{
+    const uint64_t result = rotl(state_xoshiro256mm[1] * 5, 7) * 9;
+
+    const uint64_t t = state_xoshiro256mm[1] << 17;
+
+    state_xoshiro256mm[2] ^= state_xoshiro256mm[0];
+    state_xoshiro256mm[3] ^= state_xoshiro256mm[1];
+    state_xoshiro256mm[1] ^= state_xoshiro256mm[2];
+    state_xoshiro256mm[0] ^= state_xoshiro256mm[3];
+
+    state_xoshiro256mm[2] ^= t;
+
+    state_xoshiro256mm[3] = rotl(state_xoshiro256mm[3], 45);
+
+    return result;
+}
