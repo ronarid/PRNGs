@@ -1,0 +1,16 @@
+#include <stdint.h>
+
+static uint64_t state_x;
+static uint64_t state_y;
+
+void seedprng(uint64_t seed)
+{
+       state_x = seed | 1;
+       state_y = seed | 2;
+}
+
+uint64_t random() {
+       state_x = 1200000000 * (state_x & 0xffffffff) + (state_x >> 32);
+       state_y = 1987654469 * (state_y & 0xffffffff) + (state_y >> 32);
+       return (state_x<<32)+(state_y&0xffffffff);
+}
